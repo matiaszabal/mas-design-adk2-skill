@@ -6,6 +6,7 @@ Se completa **antes** de construir. Es lo que se le da a un asistente de código
 
 - **Problema** (no la solución) y **quién** lo usa.
 - **Arquetipo elegido** y **por qué no uno más simple** (Reflex → ReAct → Planner-Executor / Query Decomposition → Deep Research; Reflection se agrega sobre cualquiera si un error es costoso y hay algo verificable).
+- **Diagrama ASCII del diseño** (nodos, quién decide en cada uno, ruta de escape y topes), confirmado por el usuario antes de construir.
 - **Datos:** sintéticos o reales. Si son reales o sensibles, **primero** confirmar que el destino está aprobado (región, contrato, control de acceso).
 
 ## 1. ¿Quién decide qué se ejecuta después?

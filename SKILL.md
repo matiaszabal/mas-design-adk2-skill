@@ -24,8 +24,8 @@ updated: 2026-09-26
 ## Flujo
 
 1. **Elegir el arquetipo.** Empezar por lo más simple que resuelva la tarea. Árbol de decisión de cinco preguntas en `references/mapeo_arquetipos_adk2.md` («Cómo elegir»).
-2. **Especificar con las tres preguntas** (`references/plantilla_especificacion.md`), **haciendo las «Preguntas de descubrimiento» de abajo antes de escribir código**. Ejemplo completo: `ejemplos/query_decomposition/especificacion.md`. Si el usuario no puede responderlas, todavía no está listo para construir.
-3. **Mapear a capacidades de ADK2** (`references/mapeo_arquetipos_adk2.md`): qué palanca da el control, cuál el contexto, cuál la terminación. Marca qué está verificado.
+2. **Especificar con las tres preguntas** (`references/plantilla_especificacion.md`), **haciendo las «Preguntas de descubrimiento» de abajo antes de escribir código**. Si el usuario ya tiene la consigna escrita, puede pasar el documento (ver «Cómo conversar»). Ejemplo completo: `ejemplos/query_decomposition/especificacion.md`. Si el usuario no puede responderlas, todavía no está listo para construir.
+3. **Mapear a capacidades de ADK2** (`references/mapeo_arquetipos_adk2.md`): qué palanca da el control, cuál el contexto, cuál la terminación. Marca qué está verificado. **Dibujar el diseño en ASCII y esperar confirmación antes de escribir código** (ver «Diagrama del diseño»).
 4. **Construir.** Con un asistente de código y los skills `google-agents-cli-adk-code` / `-workflow`. El asistente recibe la especificación, no una idea vaga.
 5. **Verificar** (`references/checklist_revision.md`), en este orden:
    1. Prueba **sin LLM real** con un modelo falso que registre lo que ADK envía a cada agente (`ejemplos/query_decomposition/modelo_falso.py`, `test_sin_llm.py`). Cubre estructura, topes y contexto, sin costo.
@@ -33,9 +33,39 @@ updated: 2026-09-26
    3. **Corridas reales**, varias (≥3) y con datos sintéticos. Reportar la tasa de aciertos, no una sola corrida.
 6. **Registrar la evidencia** (salidas guardadas) y lo no verificado.
 
+## Cómo conversar
+
+Aplica a todas las fases de «Preguntas de descubrimiento».
+
+- **Una pregunta por mensaje**, corta, con un valor por defecto propuesto (p. ej. «Por defecto, un mensaje que no encaja va a una persona. ¿Te sirve?»). No mandes la lista completa de golpe: aunque el skill la tenga junta, el usuario la contesta de a una.
+- **Lenguaje del usuario en las preguntas, término técnico en la especificación.** Preguntá «¿qué querés que pase con un mensaje que no encaja en ninguna cola?» y anotá «ruta de escape (`DEFAULT_ROUTE`)» en la especificación. Explicá un término técnico solo cuando haga falta para decidir.
+- **Ofrecé subir la consigna.** Al empezar: «¿Tenés la consigna escrita (un documento, un mail, un ticket)? Si la pasás, leo eso y solo te pregunto lo que falte». Si la pasa: leela completa, **devolvé un resumen de lo que entendiste** (problema, colas o pasos, restricciones) y preguntá solo lo que no esté cubierto. Lo que el documento no diga es **decisión pendiente**, no algo que se infiere.
+- **Antes de procesar el documento, revisá si trae datos reales o sensibles** (nombres, cuentas, mensajes de clientes). Si los trae, **frená y preguntá** si el destino (modelo, región, almacenamiento) está aprobado para ese dato; no lo cites ni lo copies a archivos hasta tener la respuesta.
+- **Al cerrar cada fase, resumí en una o dos líneas** lo acordado, para que el usuario corrija antes de seguir.
+- **No fingir que se sabe:** si el usuario no sabe, decilo con naturalidad («lo dejamos como pendiente») y seguí.
+
+## Diagrama del diseño
+
+Después de mapear a ADK2 y **antes de escribir código**, mostrá el diseño en ASCII y pedí confirmación (¿falta algún camino? ¿algo va a otro lado?). Es más barato corregir un dibujo que un agente construido.
+
+Convenciones:
+- Un nodo por línea de flujo; las flechas son rutas. Indicá al lado de cada nodo quién decide: `(código)` o `(LLM, N llamada/s)`.
+- Dibujá **todas las salidas**, incluida la **ruta de escape** (`DEFAULT_ROUTE`) y qué pasa al alcanzar un tope.
+- Si hay bucle o fan-out, anotá el **tope** en el dibujo.
+- Debajo, una línea por cada una de las tres decisiones (quién decide, con qué contexto, cuándo se detiene).
+
+Ejemplo (Reflex, tomado de `ejemplos/reflex/reflex.py`, verificado):
+
+```
+START → iniciar → clasificador ─→ enrutar ─┬─ "tarjetas"  → cola_tarjetas
+                  (LLM, 1 llamada)         ├─ "prestamos" → cola_prestamos
+                                           ├─ "fraude"    → cola_fraude      (prioridad alta)
+                                           └─ DEFAULT     → derivar_a_humano (escape)
+```
+
 ## Preguntas de descubrimiento
 
-**Regla de conducta:** antes de escribir código, hacé estas preguntas **de a una fase por vez**, en orden. Ofrecé un valor por defecto para cada una (con el hallazgo que lo respalda) y aceptá «no sé»: en ese caso, anotalo como **decisión pendiente** en la especificación en lugar de inventar la respuesta. **No generes código hasta que la especificación esté aceptada.** Estas preguntas y su orden **no se probaron con el skill instalado**.
+**Regla de conducta:** antes de escribir código, hacé estas preguntas **de a una por mensaje**, en orden. Ofrecé un valor por defecto para cada una (con el hallazgo que lo respalda) y aceptá «no sé»: en ese caso, anotalo como **decisión pendiente** en la especificación en lugar de inventar la respuesta. **No generes código hasta que la especificación esté aceptada.** Estas preguntas, su orden y el tono de v2 **no se probaron con el skill instalado**.
 
 ### Fase 1 · El problema (plantilla, sección 0)
 1. ¿Cuál es el problema real (no la solución) y quién lo usa?
