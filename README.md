@@ -8,7 +8,7 @@
 
 
 - `RESUMEN_HALLAZGOS.md` — **empezar por acá**: una página con los hallazgos que más importan, lo no verificado y un orden de lectura.
-- `SKILL.md` — el skill (flujo, reglas que salieron de la evidencia, límites).
+- `SKILL.md` — el skill (flujo, **cómo usarlo con un recorrido y frases de ejemplo**, reglas que salieron de la evidencia, límites).
 - `references/` — mapeo arquetipo → ADK2 (con estado de verificación), plantilla de especificación, lista de revisión, hallazgos verificados, repos y plantillas.
 - `ejemplos/{reflex,react,planner_executor,query_decomposition,reflection,deep_research}/` — ejemplos completos y corridos: especificación, código, tests sin LLM, corridas reales con Gemini, revisión. (`modelo_falso.py` y `traza.py` están copiados en ambos.)
 

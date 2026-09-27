@@ -33,6 +33,34 @@ updated: 2026-09-26
    3. **Corridas reales**, varias (≥3) y con datos sintéticos. Reportar la tasa de aciertos, no una sola corrida.
 6. **Registrar la evidencia** (salidas guardadas) y lo no verificado.
 
+## Cómo usarlo
+
+> **Sin probar.** Este recorrido y las frases de ejemplo se escribieron a partir del flujo y de los ejemplos del repositorio; **no se probaron con el skill instalado** ni se comprobó que se dispare con la descripción del encabezado. Instalarlo: ver `README.md`.
+
+### Recorrido de punta a punta (ejemplo: «un agente que verifica un cobro duplicado antes de reembolsar»)
+
+1. **Pedir el diseño, no el código.** Contás el problema; el skill no escribe código todavía.
+2. **Elegir el arquetipo.** Se aplican las cinco preguntas de `references/mapeo_arquetipos_adk2.md` («Cómo elegir»). Aquí: el camino no se conoce de antemano y hay pocas herramientas → **ReAct**; como hay una acción con efecto, conviene agregar una auditoría de lo que el modelo afirma.
+3. **Especificar con las tres preguntas** (`references/plantilla_especificacion.md`): quién decide qué sigue, con qué contexto, cuándo se detiene, más criterios de aceptación numerados y restricciones. Un ejemplo completo por arquetipo está en `ejemplos/<arquetipo>/especificacion.md`.
+4. **Mapear a ADK2** con `references/mapeo_arquetipos_adk2.md`: qué palanca da el control, cuál el contexto y cuál la terminación, y qué está verificado.
+5. **Construir** con un asistente de código y los skills `google-agents-cli-*`, entregándole **la especificación** (no una idea vaga).
+6. **Verificar** en el orden de «Flujo», paso 5: tests sin modelo real, contexto observable, corridas reales repetidas y `references/checklist_revision.md`.
+7. **Registrar** qué se verificó, qué **no** y qué se cambió para que pasara (formato de `ejemplos/*/revision.md`).
+
+### Frases con las que pedirlo
+
+- **Elegir:** «Tengo que enrutar mensajes de clientes a distintas colas. ¿Qué arquetipo me conviene y por qué?» · «¿Uso ReAct o Planner-Executor para una conciliación con aprobación previa?»
+- **Especificar:** «Armame la especificación con las tres preguntas para un agente de Reflection que redacta respuestas a reclamos.» · «Revisá esta especificación: ¿falta algún tope o alguna condición de terminación?»
+- **Mapear:** «¿Con qué capacidades de ADK 2 implemento Deep Research? ¿Qué palanca controla el contexto de cada investigador?»
+- **Construir:** «Con esta especificación, escribí el agente en ADK 2.9.1 y los tests sin modelo real.»
+- **Revisar:** «Revisá este agente con la checklist: ¿hay tope externo, contexto aislado y una auditoría de lo que el modelo afirma?» · «Mi agente ReAct dice que abrió un reembolso pero no llamó a la herramienta: ¿cómo lo detecto?»
+- **Alumnos:** «Un alumno pregunta cómo implementar un arquetipo sin escribir el código: ¿qué le respondo?» (ver «Cómo responder…»).
+
+### Qué esperar y qué no pedirle
+
+- **Sí:** que separe lo **verificado** de lo **no verificado**, cite el hallazgo (`references/hallazgos_adk2_2_9_1.md`) y proponga un tope o una auditoría cuando falte.
+- **No:** que asegure que un agente funciona sin correrlo; que describa en YAML arquetipos distintos de Reflection (solo ese se verificó); ni que use `SequentialAgent`, `ParallelAgent` o `LoopAgent` (deprecados).
+
 ## Reglas que salieron de la evidencia (ADK 2.9.1)
 
 - **El aislamiento de contexto NO es automático.** Un `LlmAgent` invocado con `ctx.run_node` desde un worker paralelo recibió 4 contenidos (la pregunta original duplicada, una transcripción del plan completo y su propia entrada); con `include_contents="none"` recibe 1. Si el arquetipo exige aislamiento, pedirlo **explícitamente**. Detalle y cómo se midió: `references/hallazgos_adk2_2_9_1.md`.
