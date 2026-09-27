@@ -1,0 +1,36 @@
+# Reflection como Workflow descrito en YAML (ADK 2.9.1; el cargador from_config está marcado @experimental).
+# Los nodos función y las clases vienen de refl.py (módulo importable desde el directorio del ejemplo).
+agent_class: Workflow
+name: reflection_yaml
+description: Ciclo generar → validar → criticar → decidir, con tope de rondas y escalamiento.
+edges:
+  - - START
+    - refl.iniciar
+    - agent_class: LlmAgent
+      name: generador
+      model: gemini-2.5-flash
+      output_key: borrador
+      include_contents: "none"
+      before_model_callbacks:
+        - name: refl.log_contexto
+      instruction: |
+        Sos un agente de atención al cliente de un banco. Redactá una respuesta breve (máximo 90 palabras) al reclamo, usando SOLO estos datos.
+        CASO: {caso}
+        POLÍTICA: {politica}
+        Si hay observaciones previas, corregí el borrador según ellas: {feedback?}
+    - refl.validar
+    - agent_class: LlmAgent
+      name: critico
+      model: gemini-2.5-flash
+      include_contents: "none"
+      output_schema:
+        name: refl.Veredicto
+      before_model_callbacks:
+        - name: refl.log_contexto
+      instruction: |
+        Sos un revisor de respuestas a reclamos. Recibís un JSON con el caso, el borrador y la evidencia de un validador automático. Evaluá con esta rúbrica: (1) los datos coinciden con el caso; (2) no promete nada que la política no permita; (3) cita el plazo de la política y aclara que está sujeto a verificación; (4) el tono es empático y profesional. aprobado=true solo si cumple las cuatro. Si no, 'critica' dice concretamente qué corregir.
+    - refl.decidir
+  - - decidir
+    - revisar: generador
+      aprobado: refl.publicar
+      escalar: refl.escalar_a_humano

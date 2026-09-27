@@ -1,0 +1,31 @@
+# Query Decomposition (variante paralela, GRAFO PURO) descrita en YAML — ADK 2.9.1 (from_config es @experimental).
+# El fan-out lo hace `qd.respondedor_worker`: un LlmAgent con parallel_worker=True definido en Python, porque el
+# cargador YAML rechaza `parallel_worker` dentro de un agente en línea. Recibe UN elemento de la lista.
+# Los nodos función (iniciar_qd, expandir, juntar), los esquemas y el callback también viven en qd.py.
+agent_class: Workflow
+name: qd_paralela_grafo_yaml
+description: Descomponer → recuperar y responder cada sub-pregunta en paralelo (contexto aislado) → sintetizar.
+edges:
+  - - START
+    - qd.iniciar_qd
+    - agent_class: LlmAgent
+      name: descomponer
+      model: gemini-2.5-flash
+      include_contents: "none"
+      output_schema:
+        name: qd.Descomposicion
+      before_model_callbacks:
+        - name: qd.log_contexto
+      instruction: |
+        Partí la pregunta del cliente en 2 a 4 sub-preguntas independientes. Cada una debe poder responderse con UN documento de una base de tarifas y planes. No respondas la pregunta.
+    - qd.expandir
+    - qd.respondedor_worker
+    - qd.juntar
+    - agent_class: LlmAgent
+      name: sintetizador
+      model: gemini-2.5-flash
+      include_contents: "none"
+      before_model_callbacks:
+        - name: qd.log_contexto
+      instruction: |
+        Recibís un JSON con la pregunta original y las respuestas parciales con su fuente. Respondé la pregunta con el cálculo paso a paso, citando las fuentes. Usá SOLO esas respuestas parciales; si falta información, decilo.

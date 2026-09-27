@@ -1,0 +1,16 @@
+== Y1 · equivalencia estructural YAML vs Python
+  [OK ] mismos nodos
+  [OK ] mismas aristas  (6 aristas)
+  [OK ] descomponer: include_contents, output_schema e instrucción iguales  ('none', Descomposicion)
+  [OK ] sintetizador: include_contents, output_schema e instrucción iguales  ('none', None)
+  [OK ] el worker viene de qd.respondedor_worker: envuelto como _ParallelWorker, con mismos campos e instrucción  (_ParallelWorker → LlmAgent; la copia interna tiene parallel_worker=False (el envoltorio absorbe la marca))
+  [OK ] ADK trabaja con una COPIA del agente (no con el objeto original) al armar el grafo
+== Y2 · comportamiento del YAML con modelos falsos (mismos escenarios que test_grafo.py)
+  [OK ] un respondedor por sub-pregunta
+  [OK ] cada respondedor recibe 1 solo contenido y no ve la pregunta original
+  [OK ] el sintetizador recibe las respuestas parciales en orden
+  [OK ] la salida final es la del sintetizador  ('SINTESIS')
+  [OK ] tope de código: 9 propuestas → 4 llamadas  (4)
+  [OK ] paralelismo real: 4 respondedores de 0,4 s en ~1 llamada  (0.42 s)
+
+Todos los chequeos pasaron

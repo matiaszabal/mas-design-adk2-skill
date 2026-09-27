@@ -1,0 +1,17 @@
+== E1 · equivalencia estructural YAML vs Python
+  [OK ] mismos nodos
+  [OK ] mismas aristas y rutas (incluido el ciclo `revisar`)  (8 aristas)
+  [OK ] generador: include_contents, output_key y output_schema iguales  ('none', 'borrador', None)
+  [OK ] generador: la instrucción coincide (ignorando saltos de línea)
+  [OK ] generador: tiene el callback de contexto
+  [OK ] critico: include_contents, output_key y output_schema iguales  ('none', None, Veredicto)
+  [OK ] critico: la instrucción coincide (ignorando saltos de línea)
+  [OK ] critico: tiene el callback de contexto
+== E2 · comportamiento del YAML con modelos falsos (mismos escenarios que test_sin_llm.py)
+  [OK ] feliz: PUBLICADO en la ronda 1  ({'estado': 'PUBLICADO', 'rondas': 1, 'respuesta': 'Lamentamo)
+  [OK ] tope: escala tras 3 rondas  (3 llamadas)
+  [OK ] corrección: PUBLICADO en la ronda 2 y el feedback llega al generador
+  [OK ] crítico complaciente: el validador de código prevalece
+  [OK ] contexto: 1 contenido por llamada en las 3 rondas  ([('generador', 1), ('critico', 1), ('generador', 1), ('critico', 1), ('generador', 1), ('critico', 1)])
+
+Todos los chequeos pasaron

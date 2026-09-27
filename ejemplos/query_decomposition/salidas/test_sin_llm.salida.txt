@@ -1,0 +1,25 @@
+== P1 · paralela: forma del grafo y aislamiento del contexto (include_contents='none')
+  [OK ] un respondedor por sub-pregunta  (3 llamadas)
+  [OK ] cada respondedor recibe exactamente 1 contenido (su node_input)
+  [OK ] ningún respondedor ve la pregunta original
+  [OK ] ningún respondedor ve el plan (las otras sub-preguntas)
+  [OK ] el sintetizador recibe las 3 respuestas parciales con su fuente
+  [OK ] la salida final es la del sintetizador  (SINTESIS)
+== P2 · contraste: con include_contents='default' el aislamiento NO es automático (comportamiento de ADK 2.9.1)
+  [OK ] el respondedor recibe 4 contenidos  ([4, 4, 4])
+  [OK ] ve la pregunta original
+  [OK ] ve el plan completo (las otras sub-preguntas)
+== P3 · tope de código: el modelo propone 9 sub-preguntas
+  [OK ] se resuelven a lo sumo MAX_SUBPREGUNTAS=4  (4 llamadas)
+== P4 · paralelismo real: 4 respondedores de 0,4 s cada uno
+  [OK ] el tiempo total es ~1 llamada, no la suma  (0.42 s (serial serían ≥1,6 s))
+== S1 · secuencial: el modelo nunca dice 'terminar' → corta el código
+  [OK ] corta en MAX_PASOS=4  (4 pedidos, 4 respuestas)
+  [OK ] el sintetizador es informado de que fue por tope
+== S2 · secuencial: el modelo termina en la 3ª llamada
+  [OK ] se resuelven 2 sub-preguntas  (2)
+  [OK ] motivo de fin = completo
+  [OK ] la 2ª petición 'siguiente' lleva el hecho previo en su node_input
+  [OK ] cada respondedor recibe 1 solo contenido
+
+Todos los chequeos pasaron (ADK 2.9.1 )

@@ -1,0 +1,44 @@
+== reglas deterministas del plan (unitarias)
+  [OK ] un plan correcto no tiene problemas
+  [OK ] herramienta desconocida y aridad incorrecta  (['paso 1: herramienta desconocida «borrar_todo»', 'paso 2: cruzar necesita 2 ent)
+  [OK ] dependencia hacia adelante
+  [OK ] más de MAX_PASOS
+  [OK ] una entrada puede ser un paso ya completado
+== T1 · camino feliz (2026-07)
+  [OK ] COMPLETADO sin replanificar  ({'estado': 'COMPLETADO', 'replanificaciones': 0, 'pasos': [1, 2, 3, 4, 5], 'informe': 'Con)
+  [OK ] ejecutó los 5 pasos en orden de dependencias
+  [OK ] el informe menciona las dos diferencias reales (M3 y B9)  (Conciliación: M3: solo en libros; B9: solo en el banco.)
+  [OK ] el planner se llamó una sola vez
+== T2 · cada paso ve SOLO su parámetro y las salidas de sus dependencias
+  [OK ] las herramientas reciben solo {parametro, entradas}
+  [OK ] cruzar recibe exactamente las salidas de los pasos 1 y 2
+  [OK ] los pasos sin dependencias reciben entradas vacías
+  [OK ] el objetivo no llega a ningún paso
+== T3 · pasos independientes en paralelo (4 oleadas × 0,4 s; serial serían 5 × 0,4 s)
+  [OK ] el tiempo total es ~4 oleadas, no 5 pasos  (1.62 s)
+== T4 · replanificación: agosto falla en el extracto; el replan conserva lo ya hecho
+  [OK ] COMPLETADO tras 1 replanificación  ({'estado': 'COMPLETADO', 'replanificaciones': 1, 'pasos': [1, 6, 7, 8, 9], 'informe': 'Conciliación:)
+  [OK ] no repitió el paso ya hecho (movimientos internos: 1 sola llamada)
+  [OK ] el paso 1 se reutilizó como entrada del nuevo cruce  ([1, 6, 7, 8, 9])
+  [OK ] el planner de la 2ª vuelta recibe el error, lo ya hecho y el id siguiente
+  [OK ] el planner ve 1 solo contenido en ambas vueltas  ([1, 1])
+== T5 · tope: el planner insiste con el plan que falla
+  [OK ] escala a un humano tras MAX_REPLANES  (2 llamadas al planner)
+  [OK ] informa lo hecho y lo pendiente  (hecho=[1])
+  [OK ] el historial conserva el ERROR ORIGINAL de la herramienta (no solo el último rechazo del plan)  (2 fallas registradas)
+== T6 · plan inválido: se rechaza ANTES de ejecutar y se replanifica
+  [OK ] COMPLETADO tras 1 replanificación
+  [OK ] el plan inválido no ejecutó ninguna herramienta ('borrar_todo' no existe)
+  [OK ] el planner recibió el motivo del rechazo
+== T7 · aprobación humana con RequestInput (pausa y reanudación)
+  [OK ] el flujo se PAUSA antes de ejecutar: 0 herramientas ejecutadas  ({'pausa': True, 'id': 'e29a5da4-e953-4e89-a16d-9872c0bd1e92', 'final': None, 'herramientas': 0, 'planner': 1})
+  [OK ] al aprobar, ejecuta y completa  ({'estado': 'COMPLETADO', 'replanificaciones': 0, 'pasos': [1, 2, 3, 4,)
+  [OK ] reanudar NO vuelve a llamar al planner  (1 llamada)
+  [OK ] con observaciones: replanifica y vuelve a pedir aprobación (2 pausas, 0 herramientas)  ([True, True, False])
+  [OK ] el planner recibió las observaciones del revisor
+  [OK ] tras aprobar el 2º plan completa con 1 replanificación
+== T8 · contexto del planner con include_contents='default' (observación)
+     contenidos por llamada del planner: [2, 4]
+  [OK ] con 'default' el planner ve más de 1 contenido al replanificar
+
+Todos los chequeos pasaron (ADK 2.9.1 )

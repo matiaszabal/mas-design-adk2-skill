@@ -1,0 +1,9 @@
+palanca                         planificador  n_contents  ¿ve la pregunta original?
+default                         funcion       2           True
+include_contents='none'         funcion       1           False
+use_sub_branch=True             funcion       2           True
+override_isolation_scope='w'    funcion       2           True
+default                         llmagent      4           True
+include_contents='none'         llmagent      1           False
+use_sub_branch=True             llmagent      4           True
+override_isolation_scope='w'    llmagent      2           True

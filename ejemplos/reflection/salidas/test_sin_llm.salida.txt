@@ -1,0 +1,27 @@
+== validador determinista
+  [OK ] el borrador malo falla y el bueno pasa  (['no cita el plazo de la política (5 días hábiles)', 'no aclara que el reembolso está sujeto a verificación'])
+  [OK ] una NEGACIÓN de la promesa no es una falla  ([])
+  [OK ] una promesa afirmativa sí es una falla
+== R1 · camino feliz: el borrador bueno y el crítico aprueba
+  [OK ] estado PUBLICADO en la ronda 1  ({'estado': 'PUBLICADO', 'rondas': 1, 'respuesta': 'Lamentamos el inconveniente. )
+  [OK ] una llamada al generador y una al crítico
+== R2 · tope: el generador insiste con el borrador malo y el crítico nunca aprueba (MAX_RONDAS=3)
+  [OK ] corta y escala a un humano  (ESCALADO A HUMANO)
+  [OK ] exactamente 3 rondas (generador y crítico)
+  [OK ] informa lo que quedó pendiente  (no cita el plazo de la política (5 días hábiles); no aclara que el ree)
+== R3 · corrección: ronda 1 mala (el crítico la rechaza), ronda 2 buena
+  [OK ] PUBLICADO en la ronda 2  ({'estado': 'PUBLICADO', 'rondas': 2, 'respuesta': 'Lamentamo)
+  [OK ] el feedback llega al generador de la ronda 2 (instrucción y contenido)
+  [OK ] la ronda 1 NO tenía feedback
+== R4 · crítico complaciente: aprueba el borrador malo; el validador de código prevalece
+  [OK ] no publica en la ronda 1 aunque el crítico aprobó  ({'estado': 'PUBLICADO', 'rondas': 2, 'respuesta': 'Lamentamo)
+== R5 · contexto por ronda (3 rondas: falla, falla, pasa)
+     include_contents='none': {'generador': [1, 1, 1], 'critico': [1, 1, 1]}
+     include_contents='default': {'generador': [2, 6, 10], 'critico': [4, 8, 12]}
+  [OK ] con 'none': generador y crítico ven siempre 1 contenido
+  [OK ] con 'default': el contexto del generador crece entre rondas  ([2, 6, 10])
+== R6 · el crítico no ve la instrucción del generador
+  [OK ] la instrucción del generador no aparece en el request del crítico
+  [OK ] el crítico sí recibe el borrador y la evidencia del validador
+
+Todos los chequeos pasaron (ADK 2.9.1 )

@@ -1,0 +1,28 @@
+== A1 · el bucle: el modelo decide en cada vuelta y ADK ejecuta lo que pide
+  [OK ] 5 llamadas al modelo (4 herramientas + la respuesta final)  (5 llamadas)
+  [OK ] las herramientas se ejecutaron en el orden que pidió el modelo
+  [OK ] la acción con efecto se ejecutó una vez
+  [OK ] el usuario recibe el texto final del modelo
+== A2 · el contexto CRECE en cada vuelta (call + response = 2 contenidos por herramienta)
+  [OK ] progresión de contenidos por llamada al modelo: 1, 3, 5, 7, 9  ([1, 3, 5, 7, 9])
+  [OK ] include_contents='none' NO cambia esa progresión dentro de la invocación (solo excluye turnos previos)  ([1, 3, 5, 7, 9])
+== A3 · tope externo: un modelo que nunca termina
+  [OK ] con max_llm_calls=5: se lanza LlmCallsLimitExceededError tras 5 llamadas  (LlmCallsLimitExceededError, 5 llamadas)
+  [OK ] el usuario NO recibe ningún texto: el llamador debe atrapar la excepción y responder algo
+  [OK ] SIN tope explícito, el valor por defecto deja pasar 500 llamadas al modelo antes de cortar  (500 llamadas (5.2 s con modelo falso))
+  [OK ] ADK no detecta llamadas repetidas: las ejecuta las 3 veces
+== A4 · herramientas que fallan
+  [OK ] una herramienta que LANZA una excepción mata toda la corrida (el modelo nunca ve el error)  (RuntimeError, 1 llamada)
+  [OK ] una herramienta que DEVUELVE {'error': …} deja continuar al modelo
+  [OK ] una herramienta inexistente: ADK devuelve al modelo un error que lista las herramientas disponibles
+  [OK ] argumentos equivocados: ADK devuelve al modelo qué parámetro falta
+== A5 · no hay compuerta: si el modelo pide la acción con efecto sin verificar, se ejecuta
+  [OK ] «verificá antes de reembolsar» es solo una instrucción: la acción se ejecutó igual
+== A6 · auditoría: lo que el modelo AFIRMA vs lo que REALMENTE se ejecutó
+  [OK ] afirma «he solicitado el reembolso» sin haber llamado a la herramienta → se detecta
+  [OK ] «Se ha generado una solicitud de reembolso» sin ticket → se detecta
+  [OK ] «Procederé a solicitar el reembolso» sin haberlo hecho (promesa) → se detecta
+  [OK ] una negación no se marca («no corresponde… no se ha generado…»)
+  [OK ] si la herramienta SÍ se ejecutó, la misma afirmación no se marca
+
+Todos los chequeos pasaron (ADK 2.9.1 )

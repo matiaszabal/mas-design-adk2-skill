@@ -1,0 +1,38 @@
+== D1 · una ronda: cobertura suficiente
+  [OK ] 1 ronda, motivo «cobertura suficiente», sin brechas  (cobertura suficiente)
+  [OK ] 5 investigadores en la ronda (uno por tema)  (['identidad societaria', 'litigios', 'reputación', 'situación financiera', 'riesgos regulatorios'])
+  [OK ] el informe se escribe DESDE las notas y cita fuentes reales (auditoría de citas limpia)  (INFORME: Hallazgo de identidad societaria [ID-02] Hallazgo de litigios [LI-02] H)
+== D2 · dos rondas: el evaluador detecta una brecha y la segunda ronda investiga SOLO eso
+  [OK ] 2 rondas y cobertura suficiente al final  (rondas=2)
+  [OK ] la 2ª ronda investigó 1 sola consulta (5 + 1 en total), sin repetir lo cubierto  (['litigios'])
+  [OK ] el planificador de la 2ª ronda recibe las brechas y las notas COMPACTAS
+  [OK ] las brechas ya cubiertas no quedan abiertas
+  [OK ] las notas fusionan lo de dos rondas: «litigios» reúne las fuentes de las dos rondas
+== D3 · presupuesto: el evaluador NUNCA queda conforme
+  [OK ] corta en MAX_RONDAS=3 con motivo «presupuesto (rondas)»  (rondas=3, presupuesto (rondas))
+  [OK ] entrega igualmente el informe Y las brechas abiertas  (['litigios de la sociedad argentina'])
+  [OK ] el presupuesto de LLAMADAS corta antes que las rondas  (rondas=2, presupuesto (llamadas), llamadas=10)
+== D4 · tope de fan-out
+  [OK ] 9 consultas propuestas → a lo sumo MAX_INVESTIGADORES=5 investigadores  (5)
+== D5 · los investigadores corren en paralelo (5 × 2 llamadas de 0,3 s)
+  [OK ] el tiempo total es ~1 investigador, no la suma  (0.64 s (serial: ≥ 3,0 s solo de investigadores))
+== D6 · contexto de cada rol
+  [OK ] planificador, evaluador y redactor ven 1 contenido  ({'planificador': [1], 'evaluador': [1], 'redactor': [1]})
+  [OK ] cada investigador: 1 contenido y luego 3 (llamada + resultado de su propia búsqueda)  ([1, 3])
+  [OK ] ningún investigador ve la pregunta original ni las BÚSQUEDAS de los demás (use_sub_branch=True)  (0 búsquedas ajenas visibles)
+  [OK ] el redactor NO recibe el material crudo de las fuentes (solo las notas)
+== D7 · un investigador falla: no tira a los demás
+  [OK ] la corrida continúa y termina
+  [OK ] los otros 4 temas quedaron investigados
+  [OK ] el tema que falló quedó marcado como sin evidencia  (INFORME: Hallazgo de identidad societaria [ID-02] Hallazgo d)
+== D8 · auditoría de citas (determinista)
+  [OK ] detecta una cita inexistente y una fuente que ningún investigador reunió  (['cita ZZ-99 inexistente en las fuentes', 'cita DX-01 que ningún investigador reunió'])
+== D8b · las citas AGRUPADAS también se auditan (la primera versión de la auditoría era ciega a ellas)
+  [OK ] «[LI-01, RG-01]» y «[LI-02]» se leen como 3 citas
+  [OK ] una cita inexistente DENTRO de un grupo se detecta  (['cita ZZ-99 inexistente en las fuentes', 'cita DX-01 que ningún investigador reunió', 'cita ID-01 que ningún investigador reunió'])
+== D9 · notas: fusionar y compactar (unitarias)
+  [OK ] el mismo tema (sin importar mayúsculas) se fusiona, une fuentes y acumula el resumen  (['LI-02', 'LI-01'])
+  [OK ] un tema sin evidencia se completa con un hallazgo posterior
+  [OK ] compactar recorta a 320 caracteres por tema
+
+Todos los chequeos pasaron (ADK 2.9.1 )

@@ -1,0 +1,22 @@
+== R1 · una pasada: cada intención inequívoca va a su cola con UNA sola llamada al modelo
+  [OK ] tarjetas → cola tarjetas (prioridad normal), 1 llamada, 1 contenido  (1 llamada(s), 1 contenido(s))
+  [OK ] prestamos → cola prestamos (prioridad normal), 1 llamada, 1 contenido  (1 llamada(s), 1 contenido(s))
+  [OK ] fraude → cola fraude (prioridad alta), 1 llamada, 1 contenido  (1 llamada(s), 1 contenido(s))
+  [OK ] sin bucle: cada nodo se ejecutó una sola vez  (['clasificador@1', 'cola_fraude@1', 'enrutar@1', 'iniciar@1'])
+== R2 · ruta de escape: lo que el modelo no afirma con seguridad va a un humano
+  [OK ] (tarjetas, confianza baja) → humano  (no clasificable con seguridad (tarjetas, confianza baja))
+  [OK ] (fraude, confianza media) → humano  (no clasificable con seguridad (fraude, confianza media))
+  [OK ] (otro, confianza alta) → humano  (no clasificable con seguridad (otro, confianza alta))
+== R3 · el mensaje llega intacto a la cola (por el estado)
+  [OK ] la cola recibe el mensaje original
+== R4 · DEFAULT_ROUTE: una ruta inesperada no se pierde
+  [OK ] con la ruta por defecto: va al escape  ({'cola': 'humano', 'prioridad': 'normal', 'mensaje': 'hola',)
+  [OK ] SIN ruta por defecto: la rama termina EN SILENCIO (nadie recibe nada)  (0 colas recibieron el mensaje)
+== R5 · variante SIN LLM (reglas): mismas rutas y mismo escape, 0 llamadas al modelo
+  [OK ] «Me clonaron la tarjeta» → fraude  (fraude)
+  [OK ] «Quiero bloquear mi tarjeta» → tarjetas  (tarjetas)
+  [OK ] «¿Cuánto me queda de cuota del préstamo?» → prestamos  (prestamos)
+  [OK ] «Hola, ¿qué hora es?» → humano  (humano)
+  [OK ] «Perdí la tarjeta y quiero saber la cuota d» → humano  (humano)
+
+Todos los chequeos pasaron (ADK 2.9.1 )

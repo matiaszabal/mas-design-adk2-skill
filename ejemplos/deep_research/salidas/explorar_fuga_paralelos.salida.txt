@@ -1,0 +1,24 @@
+== investigadores SECUENCIALES (uno después de otro)
+secuencial: llamadas al modelo=6 | contenidos en la 2ª llamada de cada investigador=[3, 3, 3]
+     > TEMA: identidad ⏎ CONSULTA: identidad Andina
+     > 
+     > 
+== investigadores EN PARALELO (asyncio.gather)
+paralelo  : llamadas al modelo=6 | contenidos en la 2ª llamada de cada investigador=[5, 5, 5]
+     > TEMA: reputación ⏎ CONSULTA: reputación Andina
+     > 
+     > 
+     > 
+     > 
+== qué se filtra, en detalle (paralelo, sin ninguna palanca)
+   gather sin palancas                        contenidos en la 2ª llamada: [5, 5, 5]  búsquedas AJENAS visibles: 6
+     · user: texto: TEMA: reputación ⏎ CONSULTA: reputación An
+     · model: call buscar_fuentes({'consulta': 'identidad Andina'})
+     · model: call buscar_fuentes({'consulta': 'litigios Andina'})
+     · model: call buscar_fuentes({'consulta': 'reputación Andina'})
+     · user: response(...)
+== palancas de ctx.run_node para aislar a los hermanos
+   use_sub_branch=True                        contenidos en la 2ª llamada: [3, 3, 3]  búsquedas AJENAS visibles: 0
+   override_isolation_scope='inv{i}'          contenidos en la 2ª llamada: [4, 4, 4]  búsquedas AJENAS visibles: 0
+   override_branch='inv{i}'                   contenidos en la 2ª llamada: [3, 3, 3]  búsquedas AJENAS visibles: 0
+   run_id='inv{i}'                            contenidos en la 2ª llamada: [5, 5, 5]  búsquedas AJENAS visibles: 6

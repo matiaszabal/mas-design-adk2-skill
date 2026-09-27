@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.DS_Store
+
+# Salidas de corridas REALES con un modelo (no se publican; se regeneran con correr_real.py).
+# Las salidas de los tests con modelo falso (test_*.salida.txt, explorar_*.salida.txt) sí se incluyen.
+**/salidas/salida_real*
+**/salidas/_previas_*/
+**/salidas/adk_web_yaml.salida.txt
+**/salidas/latencia.salida.txt
+**/salidas/auditoria_posterior.salida.txt
