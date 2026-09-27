@@ -1,6 +1,6 @@
 # Especificación — Query Decomposition (atención al cliente de un banco ficticio)
 
-Este es el documento que escribe **el alumno** (o el profesor) antes de pedirle a un asistente de código que construya el agente. Está armado con las tres preguntas de orquestación. Es la instancia completa de la plantilla que trae el skill.
+Este es el documento que escribe **el usuario** antes de pedirle a un asistente de código que construya el agente. Está armado con las tres preguntas de orquestación. Es la instancia completa de la plantilla que trae el skill.
 
 ## 1. Objetivo y alcance
 

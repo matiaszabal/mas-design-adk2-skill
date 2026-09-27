@@ -1,6 +1,6 @@
 # Especificación — Planner-Executor (conciliación mensual de un banco ficticio)
 
-Documento que escribe el alumno antes de pedirle a un asistente de código que construya el agente. Instancia de `../../references/plantilla_especificacion.md`.
+Documento que escribe el usuario antes de pedirle a un asistente de código que construya el agente. Instancia de `../../references/plantilla_especificacion.md`.
 
 ## 1. Objetivo y alcance
 

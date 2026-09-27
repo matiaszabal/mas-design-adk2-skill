@@ -1,6 +1,6 @@
 ---
 name: mas-design-adk2
-description: Puente entre los 6 arquetipos de agentes (Reflex, ReAct, Planner-Executor, Query Decomposition, Reflection, Deep Research) y las capacidades de ADK 2 (Workflow en grafo, workflows dinámicos, colaboración). Especifica un arquetipo con tres preguntas (quién decide qué sigue, con qué contexto, cuándo se detiene), lo mapea a primitivas de ADK2, y lo revisa con una lista de verificación. Usar al diseñar, construir o revisar un agente con ADK 2.x a partir de un arquetipo, o cuando un alumno pregunta cómo implementarlo sin escribir el código a mano.
+description: Puente entre los 6 arquetipos de agentes (Reflex, ReAct, Planner-Executor, Query Decomposition, Reflection, Deep Research) y las capacidades de ADK 2 (Workflow en grafo, workflows dinámicos, colaboración). Especifica un arquetipo con tres preguntas (quién decide qué sigue, con qué contexto, cuándo se detiene), lo mapea a primitivas de ADK2, y lo revisa con una lista de verificación. Usar al diseñar, construir o revisar un agente con ADK 2.x a partir de un arquetipo, o cuando un usuario pregunta cómo implementarlo sin escribir el código a mano.
 version: 0.1-mvp
 updated: 2026-09-26
 ---
@@ -13,7 +13,7 @@ updated: 2026-09-26
 
 - Diseñar o construir un agente ADK2 a partir de un arquetipo.
 - Revisar código de orquestación (propio o generado por un asistente) contra las tres preguntas.
-- Responder a un alumno: «¿cómo implemento el arquetipo X con ADK, sin escribir el código?».
+- Responder a un usuario: «¿cómo implemento el arquetipo X con ADK, sin escribir el código?».
 
 ## Cuándo NO usar
 
@@ -24,7 +24,7 @@ updated: 2026-09-26
 ## Flujo
 
 1. **Elegir el arquetipo.** Empezar por lo más simple que resuelva la tarea. Árbol de decisión de cinco preguntas en `references/mapeo_arquetipos_adk2.md` («Cómo elegir»).
-2. **Especificar con las tres preguntas** (`references/plantilla_especificacion.md`). Ejemplo completo: `ejemplos/query_decomposition/especificacion.md`. Si el alumno no puede responderlas, todavía no está listo para construir.
+2. **Especificar con las tres preguntas** (`references/plantilla_especificacion.md`), **haciendo las «Preguntas de descubrimiento» de abajo antes de escribir código**. Ejemplo completo: `ejemplos/query_decomposition/especificacion.md`. Si el usuario no puede responderlas, todavía no está listo para construir.
 3. **Mapear a capacidades de ADK2** (`references/mapeo_arquetipos_adk2.md`): qué palanca da el control, cuál el contexto, cuál la terminación. Marca qué está verificado.
 4. **Construir.** Con un asistente de código y los skills `google-agents-cli-adk-code` / `-workflow`. El asistente recibe la especificación, no una idea vaga.
 5. **Verificar** (`references/checklist_revision.md`), en este orden:
@@ -32,6 +32,38 @@ updated: 2026-09-26
    2. **Contexto observable:** `before_model_callback` que registre cuántos contenidos y de qué roles recibe cada llamada (`log_contexto` en `qd.py`).
    3. **Corridas reales**, varias (≥3) y con datos sintéticos. Reportar la tasa de aciertos, no una sola corrida.
 6. **Registrar la evidencia** (salidas guardadas) y lo no verificado.
+
+## Preguntas de descubrimiento
+
+**Regla de conducta:** antes de escribir código, hacé estas preguntas **de a una fase por vez**, en orden. Ofrecé un valor por defecto para cada una (con el hallazgo que lo respalda) y aceptá «no sé»: en ese caso, anotalo como **decisión pendiente** en la especificación en lugar de inventar la respuesta. **No generes código hasta que la especificación esté aceptada.** Estas preguntas y su orden **no se probaron con el skill instalado**.
+
+### Fase 1 · El problema (plantilla, sección 0)
+1. ¿Cuál es el problema real (no la solución) y quién lo usa?
+2. ¿Los datos son sintéticos o reales? Si son reales o sensibles: ¿el destino (modelo, región, almacenamiento) está aprobado **antes** de correr nada?
+3. ¿Qué es un resultado correcto? Pedí un caso con entrada y salida conocidas.
+
+### Fase 2 · El arquetipo (cinco preguntas de `references/mapeo_arquetipos_adk2.md`)
+4. ¿Alcanza una sola pasada? → Reflex. Si no: ¿se parte en sub-preguntas conocibles? → Query Decomposition. ¿Se conocen los pasos y conviene aprobarlos antes? → Planner-Executor. ¿Es abierta y justifica un costo muy alto? → Deep Research; si no → ReAct.
+5. ¿Un error es costoso y existe un criterio verificable? → agregar Reflection.
+6. Proponé el arquetipo **y explicá por qué no uno más simple**. Esperá confirmación.
+
+### Fase 3 · Las tres decisiones (plantilla, secciones 1 a 3)
+7. **¿Quién decide qué sigue?** Qué decide el modelo y qué decide el código.
+8. **¿Con qué contexto?** Para cada agente o paso: qué **debe** ver y qué **no**. Recordá que el aislamiento no es automático (`include_contents="none"`; con paralelos, `use_sub_branch=True`).
+9. **¿Cuándo se detiene?** Señal de cierre, **tope de código** (iteraciones, rondas, llamadas, fan-out) y **qué se entrega al cortar**.
+
+### Fase 4 · Preguntas propias del arquetipo
+- **Reflex:** ¿la decisión es una regla o una inferencia? ¿Cuál es la **ruta de escape** (`DEFAULT_ROUTE`)? ¿Qué colas son de prioridad alta y **puede un mensaje elegirlas por sí solo** (inyección)? ¿Cuánta latencia tolerás? (≈ 2,8 s con LLM, ≈ ms con reglas.) Si hay reglas: ¿qué **precedencia** tienen?
+- **ReAct:** ¿Qué herramientas hay y qué devuelven cuando fallan? (Devolver `{"error": …}`, no lanzar excepciones.) ¿Cuál es el **tope de llamadas** y qué se le responde al usuario si se agota? (Por defecto son 500 y se lanza una excepción.) ¿Hay acciones **con efecto**? ¿Quién las aprueba? ¿Cómo se **audita lo que el modelo afirma** contra lo que se ejecutó?
+- **Planner-Executor:** ¿Quién **valida** el plan (reglas de código) y quién lo **aprueba** (¿una persona con `RequestInput`?)? ¿El ejecutor es código, no un LLM? ¿Cuántas **replanificaciones** y qué se **conserva** de lo ya hecho? ¿Qué se entrega al escalar (incluido el historial de fallas)?
+- **Query Decomposition:** ¿Las sub-preguntas son independientes (paralelo) o cada una depende de la anterior (secuencial)? ¿Tope de sub-preguntas? ¿Cómo se recupera la evidencia y qué pasa **sin evidencia**? ¿Cada sub-pregunta ve solo lo suyo?
+- **Reflection:** ¿Quién critica y con qué **rúbrica**? ¿Hay una **señal externa** determinista? (Probala contra texto **correcto**: una negación no es una promesa.) ¿El **código prevalece** sobre el crítico? ¿Tope de rondas y qué se entrega al escalar?
+- **Deep Research:** ¿Qué temas y entidades debe cubrir? ¿Presupuesto de rondas, de llamadas y de investigadores? ¿Qué hacés si el evaluador **nunca queda conforme**? (Ocurrió 3 de 3.) ¿Cómo se cita (una fuente por afirmación) y quién verifica el respaldo?
+
+### Fase 5 · Aceptación y restricciones (plantilla, secciones 4 y 5)
+10. Proponé criterios **numerados y verificables**, al menos uno por cada pregunta (resultado, contexto, tope). ¿Los aceptás o los cambiás?
+11. ¿Qué **no** debe hacer el sistema? (datos, herramientas, acciones irreversibles, agentes deprecados.)
+12. Resumí la especificación completa, con las **decisiones pendientes** marcadas, y pedí confirmación explícita **antes de construir**.
 
 ## Cómo usarlo
 
@@ -54,7 +86,7 @@ updated: 2026-09-26
 - **Mapear:** «¿Con qué capacidades de ADK 2 implemento Deep Research? ¿Qué palanca controla el contexto de cada investigador?»
 - **Construir:** «Con esta especificación, escribí el agente en ADK 2.9.1 y los tests sin modelo real.»
 - **Revisar:** «Revisá este agente con la checklist: ¿hay tope externo, contexto aislado y una auditoría de lo que el modelo afirma?» · «Mi agente ReAct dice que abrió un reembolso pero no llamó a la herramienta: ¿cómo lo detecto?»
-- **Alumnos:** «Un alumno pregunta cómo implementar un arquetipo sin escribir el código: ¿qué le respondo?» (ver «Cómo responder…»).
+- **Usuarios:** «Un usuario pregunta cómo implementar un arquetipo sin escribir el código: ¿qué le respondo?» (ver «Cómo responder…»).
 
 ### Qué esperar y qué no pedirle
 
@@ -80,7 +112,7 @@ updated: 2026-09-26
 
 - **No del todo.** En ADK 2.9.1 un `Workflow` se puede **describir en YAML** (`agent_class: Workflow`, `edges`, agentes LLM en línea) y `adk web` lo carga y lo ejecuta (hallazgo A9). Pero la lógica de decisión (validaciones, topes, prioridad sobre el crítico), los esquemas y los callbacks siguen siendo **funciones y clases Python referenciadas por ruta de módulo**.
 - El cargador (`from_config`) está marcado **experimental**, y `adk create --type CONFIG` todavía dice que no está listo.
-- Camino honesto para un alumno: especificar con las tres preguntas → que un asistente escriba el Python de decisión y el YAML de conexión → verificar con la checklist. Ejemplo: `ejemplos/reflection/yaml_reflection/`.
+- Camino honesto para un usuario: especificar con las tres preguntas → que un asistente escriba el Python de decisión y el YAML de conexión → verificar con la checklist. Ejemplo: `ejemplos/reflection/yaml_reflection/`.
 - **Solo se verificó con Reflection.** Para Query Decomposition hay un intento en curso (`parallel_worker` en línea no lo acepta el YAML; el worker debe definirse en Python): tratarlo como **pendiente**, no como resultado.
 
 ## Relación con agents-cli

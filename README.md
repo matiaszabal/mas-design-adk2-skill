@@ -48,5 +48,5 @@ Este repositorio **no instala** el skill en `~/.claude/skills/`. Para usarlo: co
 - Probar el **camino por `agents-cli scaffold`** (fija `google-adk<2.0.0`) y `agents-cli eval`; no se tocaron los skills globales.
 - **YAML de Query Decomposition (próxima iteración):** ya hay un primer intento en `ejemplos/query_decomposition/yaml_qd_grafo/` (carga si el worker paralelo se define en Python; 12 chequeos; 2/3 con Gemini); falta cerrar `adk web`, decidir cuánto del YAML aporta y probar la variante secuencial. Con Deep Research (`ctx.run_node`) no se intentó. Con Reflection ya funciona (hallazgo A9). `LoopAgent`, `SequentialAgent` y `ParallelAgent` están **deprecados** en favor de `Workflow` (lo dice el código de 2.9.1) y este skill no los usa.
 - Clonar `deep-search` y `llm-auditor` de `google/adk-recipes`, ver qué versión de ADK usan y si corren en 2.9.1.
-- Hoja de una página para el alumno (especificación + lista de revisión).
+- Hoja de una página para el usuario (especificación + lista de revisión).
 - Pendientes del ejemplo: ver `ejemplos/query_decomposition/revision.md`.

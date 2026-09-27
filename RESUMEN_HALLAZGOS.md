@@ -21,7 +21,7 @@ Seis arquetipos, seis ejemplos corridos con un modelo falso (sin costo) y con Ge
 ## Lo que NO está verificado
 
 - El **YAML de Query Decomposition** (intento parcial: el YAML rechaza `parallel_worker` en un agente en línea) y el de los demás arquetipos.
-- El camino por **`agents-cli scaffold` y `eval`**, que es el que seguiría un alumno.
+- El camino por **`agents-cli scaffold` y `eval`**, que es el que seguiría un usuario.
 - Las **mitigaciones**: los fallos quedaron visibles a propósito (inyección, acción alucinada, evaluador que no converge, citas diluidas).
 - **Calidad con datos reales** y con más corridas. El buscador de Deep Research es léxico y de juguete.
 - La documentación de `adk.dev` se leyó solo a través de resúmenes de WebFetch: releer la página original antes de citarla.
@@ -37,4 +37,4 @@ Dos auditorías mías tuvieron falsos negativos (una regla de promesas futuras e
 3. `references/hallazgos_adk2_2_9_1.md` → cada hallazgo con **dónde y cómo** se comprobó (A1 a A14).
 4. `references/mapeo_arquetipos_adk2.md` → arquetipo → capacidad de ADK2 (control, contexto, terminación, evidencia).
 5. Un ejemplo completo, por ejemplo `ejemplos/react/`: `especificacion.md` → código → `test_sin_llm.py` → `salidas/` → `revision.md`.
-6. `references/plantilla_especificacion.md` y `references/checklist_revision.md` → lo que usaría un alumno.
+6. `references/plantilla_especificacion.md` y `references/checklist_revision.md` → lo que usaría un usuario.
